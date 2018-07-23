@@ -1,6 +1,11 @@
+server:
+  port: 8081
 
 ## eureka
 eureka:
   client:
+    fetch-registry: true
+    register-with-eureka: true
     service-url:
       defaultZone: http://localhost:${eureka.client.eureka-server-port}/eureka/
+    eureka-server-port: 8082

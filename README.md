@@ -1,4 +1,3 @@
-
 ###  按照不同profile启动
 
 ```
@@ -7,7 +6,7 @@ java -jar -Dspring.profiles.active=dev eureka-server.jar
 java -jar eureka-server.jar --spring.profiles.active=dev
 ```
 
-### EurekaServer服务
+## EurekaServer服务
 
 引入EurekaServer相关依赖后，只需以下配置和代码即可启动一个EurekaServer服务。
 ```yaml
@@ -34,7 +33,44 @@ public class EurekaApplication {
 }
 ```
 
-### Provider服务
+### EurekaServer集群
+
+```yml
+# application-peer1
+server:
+  port: 8081
+
+## eureka
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:${eureka.client.eureka-server-port}/eureka/
+    eureka-server-port: 8082
+```
+```yml
+# application-peer2
+server:
+  port: 8082
+
+## eureka
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:${eureka.client.eureka-server-port}/eureka/
+    eureka-server-port: 8081
+```
+
+通过spring.profiles.active属性来分别启动peerl和peer2:
+```java
+java -jar eureka-server-1.0.0.jar --spring.profiles.active=peerl
+java -jar eureka-server-1.0.0.jar --spring.profiles.active=peer2
+```
+
+## Provider服务
 
 引入Eureka相关依赖后，只需以下配置和代码即可启动一个Provider服务。
 ```yaml
@@ -62,7 +98,7 @@ public class HelloApplication {
 }
 ```
 
-### Consumer
+## Consumer
 
 引入Eureka和Feign相关依赖后，只需以下配置和代码即可启动一个Consumer。
 ```yaml
@@ -97,7 +133,7 @@ public interface HelloServiceClient {
 }
 ```
 
-注意，eureka.client.register-with-eureka配置默认为tree，也就是说Consumer会将自己的restful服务注册到eureka上，如果不想让Consumer作为Provider服务，则需配置
+注意，eureka.client.register-with-eureka配置默认为true，也就是说Consumer会将自己的restful服务注册到eureka上，如果不想让Consumer作为Provider服务，则需配置
 ```
 eureka.client.register-with-eureka=false
 ```
