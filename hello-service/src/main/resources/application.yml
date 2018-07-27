@@ -9,8 +9,9 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:${eureka.client.eureka-server-port}/eureka/
+      defaultZone: http://${eureka.client.eureka-server-ip}:${eureka.client.eureka-server-port}/eureka/
     eureka-server-port: 8080
+    eureka-server-ip: localhost
   # 更改服务实例ID，默认显示格式 机器名:实例名:端口
   instance:
     instance-id: ${spring.cloud.client.ipAddress}:${server.port}-${spring.application.name}:@project.version@
